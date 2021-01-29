@@ -1,0 +1,66 @@
+{
+  "name": "figma-chat",
+  "version": "4.2.1",
+  "description": "",
+  "main": "code.js",
+  "scripts": {
+    "lint": "tslint --project ./ --config ./tslint.json --fix",
+    "build": "NODE_ENV=production webpack --mode=production && rm ./figma-sync/ui.js*",
+    "dev": "DEBUG=* webpack --watch",
+    "version": "conventional-changelog -p karma -i CHANGELOG.md -s -r 0 && git add ."
+  },
+  "author": "Philip Stapelfeldt <me@ph1p.dev>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ph1p/figma-sync.git"
+  },
+  "prettier": {
+    "singleQuote": true
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.19.0",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "@types/react-router-dom": "^5.1.7",
+    "create-file-webpack": "^1.0.2",
+    "css-loader": "^5.0.1",
+    "html-webpack-plugin": "^5.0.0-beta.3",
+    "style-loader": "^2.0.0",
+    "terser-webpack-plugin": "v5.1.1",
+    "ts-loader": "^8.0.14",
+    "tslint": "^6.1.3",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^4.1.3",
+    "url-loader": "^4.1.1",
+    "webpack": "^5.19.0",
+    "webpack-cli": "^4.4.0"
+  },
+  "figmaPlugin": {
+    "name": "figma-sync",
+    "id": "937099559043260765",
+    "api": "1.0.0",
+    "main": "code.js",
+    "ui": "ui.html",
+    "enableProposedApi": false,
+    "relaunchButtons": [
+      {
+        "command": "sync",
+        "name": "Sync with server",
+        "multipleSelection": true
+      }
+    ]
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "bricks.js": "^1.8.0",
+    "buffer": "^6.0.3",
+    "mobx": "^6.1.3",
+    "mobx-react": "^7.1.0",
+    "mobx-sync": "^3.0.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-router-dom": "^5.2.0",
+    "styled-components": "^5.2.1"
+  }
+}
