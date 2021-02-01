@@ -37,7 +37,7 @@
 body {
   overflow: hidden;
   background-color: #fff;
-  font-family: Inter;
+  font-family: Inter, sans-serif;
   font-size: 12px;
   margin: 0;
 }

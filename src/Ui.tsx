@@ -3,7 +3,6 @@ import React from 'react';
 import * as ReactDOM from 'react-dom';
 import { MemoryRouter as Router, Route, Switch } from 'react-router-dom';
 import styled from 'styled-components';
-
 import { StoreProvider, trunk, getStoreFromMain } from './store';
 
 import { SettingsView } from './views/Settings';

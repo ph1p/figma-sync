@@ -105,6 +105,10 @@ class FigmaMessageEmitter {
     }
   }
 
+  /**
+   * This function checks if it is asynchronous or not
+   * @param func
+   */
   isAsyncFunction(func) {
     func = func.toString().trim();
 

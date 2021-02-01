@@ -14,16 +14,25 @@ const getMimeType = (format) => {
   }[format];
 };
 
-const getNodes = (nodes) =>
-  (nodes || []).map((node) => ({
-    id: node.id,
-    name: node.name,
-    width: node.width,
-    height: node.height,
-    type: node.type,
-    parentId: node.parent.id,
-    childrenCount: node.children?.length || 0,
-  }));
+const transformNode = (node) => ({
+  id: node.id,
+  name: node.name,
+  width: node.width,
+  height: node.height,
+  type: node.type,
+  parentId: node.parent.id,
+  childrenCount: node.children?.length || 0,
+});
+
+const getNodes = (nodes) => (nodes || []).map(transformNode);
+
+fme.answer('get nodes by id', (ids: string | string[]) => {
+  if (typeof ids === 'string') {
+    return transformNode(figma.getNodeById(ids));
+  } else {
+    return ids.map((id) => transformNode(figma.getNodeById(id)));
+  }
+});
 
 fme.answer('children by id', (id) =>
   getNodes((figma.getNodeById(id) as any).children)

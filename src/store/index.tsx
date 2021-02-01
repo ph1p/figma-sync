@@ -10,10 +10,15 @@ class RootStore {
     makeAutoObservable(this);
   }
 
+  token = '';
   url = '';
-
   syncNodeIds = [];
+  serverFolders: Record<string, string[]> = null;
 
+  /**
+   * Toggle ids which should be synchonized
+   * @param id
+   */
   toggleSyncNodeId(id: string) {
     if (this.syncNodeIds.includes(id)) {
       this.syncNodeIds = this.syncNodeIds.filter((syncId) => syncId !== id);
@@ -22,8 +27,34 @@ class RootStore {
     }
   }
 
+  /**
+   * Set Server URL
+   * @param url
+   */
   setUrl(url: string) {
     this.url = url;
+  }
+
+  /**
+   * Set API-Token
+   * @param token
+   */
+  setToken(token: string) {
+    this.token = token;
+  }
+
+  /**
+   * Set folders from server
+   * @param folders
+   */
+  setServerFolders(folders: Record<string, string[]>) {
+    this.serverFolders = folders;
+  }
+
+  // Log user out
+  logout() {
+    this.setToken('');
+    this.setServerFolders(null);
   }
 }
 

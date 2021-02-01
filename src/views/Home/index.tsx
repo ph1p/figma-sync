@@ -128,7 +128,7 @@ export const HomeView: FunctionComponent = observer(() => {
             )}
           </div>
           <div>Home</div>
-          <div></div>
+          <div>{store.syncNodeIds.length}</div>
         </Header>
         <Images>
           {selectedNodes.map((node) => (
