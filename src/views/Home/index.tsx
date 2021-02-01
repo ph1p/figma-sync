@@ -3,7 +3,9 @@ import { observer } from 'mobx-react';
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import Button from '../../components/Button';
 import Checkbox from '../../components/Checkbox';
+import { SettingsIcon } from '../../components/icons/SettingsIcon';
 import { useStore } from '../../store';
 import fme from '../../utils/FigmaMessageEmitter';
 // import axios from 'axios';
@@ -155,7 +157,10 @@ export const HomeView: FunctionComponent = observer(() => {
         </Images>
       </Content>
       <Bottom>
-        Home<Link to="/settings">Settings</Link>
+        <Link to="/settings">
+          <SettingsIcon width={20} height={20} />
+        </Link>
+        <Button>Sync!</Button>
       </Bottom>
     </View>
   );
@@ -165,6 +170,7 @@ const Header = styled.div`
   display: flex;
   justify-content: space-evenly;
   position: sticky;
+  z-index: 3;
   top: 0;
   padding: 10px;
   border-bottom: 1px solid #dfdfdf;
@@ -186,14 +192,18 @@ const Header = styled.div`
 
 const Bottom = styled.div`
   overflow: auto;
-  height: 50px;
+  display: flex;
+  justify-content: space-between;
+  height: 53px;
   border-top: 1px solid #dfdfdf;
+  padding: 10px;
+  align-items: center;
 `;
 
 const View = styled.div`
   display: grid;
   overflow: auto;
-  grid-template-rows: calc(100vh - 50px) 50px;
+  grid-template-rows: calc(100vh - 53px) 53px;
 `;
 
 const Content = styled.div`
