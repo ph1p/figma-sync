@@ -9,6 +9,7 @@ import { SettingsView } from './views/Settings';
 import { HomeView } from './views/Home';
 
 import './style.css';
+import { SelectedView } from './views/Selected';
 
 const AppWrapper = styled.div`
   overflow: hidden;
@@ -19,6 +20,9 @@ const App = observer(() => {
     <AppWrapper>
       <Router>
         <Switch>
+          <Route exact path="/selected">
+            <SelectedView />
+          </Route>
           <Route exact path="/settings">
             <SettingsView />
           </Route>

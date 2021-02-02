@@ -15,6 +15,18 @@ class RootStore {
   syncNodeIds = [];
   serverFolders: Record<string, string[]> = null;
 
+  get isLoggedIn() {
+    return this.token !== '';
+  }
+
+  /**
+   * Set ids
+   * @param ids
+   */
+  setSyncNodeIds(ids: string[]) {
+    this.syncNodeIds = ids;
+  }
+
   /**
    * Toggle ids which should be synchonized
    * @param id

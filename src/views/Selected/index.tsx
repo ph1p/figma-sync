@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import Checkbox from '../../components/Checkbox';
 import { Header } from '../../components/Header';
 import { BackIcon } from '../../components/icons/BackIcon';
-import { ListIcon } from '../../components/icons/ListIcon';
+import { CloudUploadIcon } from '../../components/icons/CloudUploadIcon';
 import { SettingsIcon } from '../../components/icons/SettingsIcon';
 import { Layout } from '../../components/Layout';
 import { useStore } from '../../store';
@@ -28,7 +28,7 @@ interface FigmaNode {
   childrenCount: number;
 }
 
-export const HomeView: FunctionComponent = observer(() => {
+export const SelectedView: FunctionComponent = observer(() => {
   const store = useStore();
 
   const [selectedNodes, _setSelectedNodes] = useState<FigmaNode[]>([]);
@@ -36,13 +36,6 @@ export const HomeView: FunctionComponent = observer(() => {
   const setSelectedNodes = (nodes) => {
     selectedNodesRef.current = nodes;
     _setSelectedNodes(nodes);
-  };
-
-  const [previousNodes, _setPreviousNodes] = useState<string[]>([]);
-  const previousNodesRef = useRef(previousNodes);
-  const setPreviousNodes = (node) => {
-    previousNodesRef.current = node;
-    _setPreviousNodes(node);
   };
 
   const setNodes = async (selections: FigmaNode[]) => {
@@ -71,19 +64,11 @@ export const HomeView: FunctionComponent = observer(() => {
       fme
         .ask('check if nodes exists', toJS(store.syncNodeIds))
         .then((ids: string[]) => store.setSyncNodeIds(ids));
+
+      fme.ask('nodes by ids', toJS(store.syncNodeIds)).then((nodes) => {
+        setNodes(nodes as FigmaNode[]);
+      });
     }
-    fme.ask('page-nodes').then(setNodes);
-
-    fme.on('selection', () => {
-      if (store.syncNodeIds.length > 0) {
-        fme
-          .ask('check if nodes exists', toJS(store.syncNodeIds))
-          .then((ids: string[]) => store.setSyncNodeIds(ids));
-      }
-      fme.ask('page-nodes').then(setNodes);
-    });
-
-    return () => fme.removeListener('selection');
   }, []);
 
   const getImage = (node) => {
@@ -94,46 +79,20 @@ export const HomeView: FunctionComponent = observer(() => {
     return window.URL.createObjectURL(blob);
   };
 
-  const getChildrenById = async (node: FigmaNode | string) => {
-    const id = typeof node === 'string' ? node : node.id;
-
-    const nodes = (await fme.ask('children by id', id)) as FigmaNode[];
-    if (nodes.length > 0) {
-      if (typeof node !== 'string') {
-        console.log(node.parentId);
-        setPreviousNodes([...previousNodesRef.current, node.parentId]);
-      }
-      setNodes(nodes);
-    }
-  };
-
-  const clickBackButton = () => {
-    if (previousNodes.length > 0) {
-      const lastNodeId = previousNodes[previousNodes.length - 1];
-      setPreviousNodes(
-        previousNodesRef.current.filter((id) => lastNodeId !== id)
-      );
-      getChildrenById(lastNodeId);
-    }
-  };
-
   return (
     <Layout
       header={
         <Header
-          title="Home"
+          title="Selected Nodes"
           left={
-            <BackIcon
-              width={20}
-              height={20}
-              className={previousNodes.length > 0 ? '' : 'disabled'}
-              onClick={clickBackButton}
-            />
+            <Link to="/">
+              <BackIcon width={20} height={20} />
+            </Link>
           }
           right={
-            <Link to="/selected">
-              <ListIcon width={20} height={20} />
-            </Link>
+            <div onClick={() => {}}>
+              <CloudUploadIcon width={20} height={20} />
+            </div>
           }
         />
       }
@@ -143,35 +102,50 @@ export const HomeView: FunctionComponent = observer(() => {
         </Link>
       }
     >
-      <Images>
+      <List>
         {selectedNodes.map((node) => (
-          <div key={node.id}>
-            <Image>
-              {node.childrenCount > 0 && (
-                <div className="children" onClick={() => getChildrenById(node)}>
-                  View children
-                </div>
-              )}
-
-              <img src={getImage(node)} />
-              <div className="footer">
+          <Item key={node.id}>
+            <div>
+              <div>
+                <img src={getImage(node)} />
+              </div>
+              <div>
                 <span>{node.name}</span>
+              </div>
+              <div>
                 <Checkbox
                   checked={store.syncNodeIds.includes(node.id)}
                   onClick={() => store.toggleSyncNodeId(node.id)}
                 />
               </div>
-            </Image>
-          </div>
+            </div>
+            <div>
+              {store.serverFolders && (
+                <select name="" id="">
+                  {Object.entries(store.serverFolders).map(
+                    ([folder, files]) => (
+                      <optgroup key={folder} label={folder}>
+                        {files.map((file) => (
+                          <option key={folder + file} value={file}>
+                            {file}
+                          </option>
+                        ))}
+                      </optgroup>
+                    )
+                  )}
+                </select>
+              )}
+            </div>
+          </Item>
         ))}
-      </Images>
+      </List>
     </Layout>
   );
 });
 
-const Images = styled.div`
+const List = styled.div`
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   padding: 5px;
   & > div {
     flex: 0 1 calc(50% - 10px);
@@ -179,7 +153,7 @@ const Images = styled.div`
   }
 `;
 
-const Image = styled.div`
+const Item = styled.div`
   position: relative;
   background-color: #fff;
   background-image: repeating-linear-gradient(
@@ -215,16 +189,6 @@ const Image = styled.div`
     }
   }
   img {
-    width: 100%;
-  }
-  .footer {
-    background-color: #fff;
-    padding: 5px 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    span {
-      width: 97px;
-    }
+    width: 50px;
   }
 `;

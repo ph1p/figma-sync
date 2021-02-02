@@ -26,11 +26,17 @@ const transformNode = (node) => ({
 
 const getNodes = (nodes) => (nodes || []).map(transformNode);
 
-fme.answer('get nodes by id', (ids: string | string[]) => {
+fme.answer('check if nodes exists', (ids: string[]) =>
+  ids.filter(figma.getNodeById)
+);
+
+fme.answer('nodes by ids', (ids: string | string[]) => {
   if (typeof ids === 'string') {
     return transformNode(figma.getNodeById(ids));
   } else {
-    return ids.map((id) => transformNode(figma.getNodeById(id)));
+    return ids
+      .filter(figma.getNodeById)
+      .map((node) => transformNode(figma.getNodeById(node)));
   }
 });
 

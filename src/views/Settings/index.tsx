@@ -4,8 +4,12 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import Button from '../../components/Button';
 import { useStore } from '../../store';
-import { fetchFolders } from '../../utils/fetchQueries';
+import { fetchFolders } from '../../utils/queries';
 import { sleep } from '../../utils/helpers';
+import { Header } from '../../components/Header';
+import { Layout } from '../../components/Layout';
+import { BackIcon } from '../../components/icons/BackIcon';
+import { SyncIcon } from '../../components/icons/SyncIcon';
 
 export const SettingsView: FunctionComponent = observer(() => {
   const store = useStore();
@@ -13,8 +17,18 @@ export const SettingsView: FunctionComponent = observer(() => {
   const [token, setToken] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  // const [loading, isError, data] = useGetFolders(store.url, store.token);
+
+  // useEffect(() => {
+  //   if (!loading && !isError && data) {
+  //     store.setToken(token);
+  //     store.setServerFolders(data);
+  //   }
+  // }, [loading, isError, data]);
+
   const connect = (e) => {
     e.preventDefault();
+
     getFolders(store.url, token);
   };
 
@@ -33,16 +47,36 @@ export const SettingsView: FunctionComponent = observer(() => {
   };
 
   return (
-    <View>
-      Settings<Link to="/">Home</Link>
-      {store.token ? (
+    <Layout
+      header={
+        <Header
+          title="Settings"
+          left={
+            <Link to="/">
+              <BackIcon width={20} height={20} />
+            </Link>
+          }
+          right={
+            store.isLoggedIn && (
+              <SyncIconWrap
+                spin={isLoading ? 1 : 0}
+                width={20}
+                height={20}
+                onClick={() => getFolders(store.url, store.token)}
+              />
+            )
+          }
+        />
+      }
+    >
+      {store.isLoggedIn ? (
         <>
+          connected with: {store.url}
+          <br />
+          <strong>Folders:</strong>{' '}
+          {Object.keys(store.serverFolders).join(', ')}
           <Button onClick={() => store.logout()}>abmelden</Button>
-
           {isLoading && 'syncing...'}
-          <Button onClick={() => getFolders(store.url, store.token)}>
-            resync
-          </Button>
         </>
       ) : !isLoading ? (
         <form onSubmit={connect}>
@@ -67,9 +101,16 @@ export const SettingsView: FunctionComponent = observer(() => {
       ) : (
         'loading...'
       )}
-      {JSON.stringify(store.serverFolders)}
-    </View>
+    </Layout>
   );
 });
 
-const View = styled.div``;
+const SyncIconWrap = styled<{ spin: boolean }>(SyncIcon)`
+  ${(props) => (props.spin ? 'animation: rotate 2s linear infinite;' : '')}
+
+  @keyframes rotate {
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+`;
